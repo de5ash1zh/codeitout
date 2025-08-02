@@ -118,4 +118,12 @@ export const logout = async (req, res) => {
     });
   }
 };
-export const check = async (req, res) => {};
+//CHECK
+export const check = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      message: "User authenticated successfully",
+    });
+  } catch (error) {}
+};
