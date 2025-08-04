@@ -2,27 +2,6 @@
 
 This repository contains the backend implementation for CodeItOut, a user authentication system built with Node.js, Express, Prisma, and PostgreSQL.
 
-## Project Structure
-
-```
-.env
-.gitignore
-[`package.json`](package.json )
-prisma/
-  [`prisma/schema.prisma`](prisma/schema.prisma )
-  migrations/
-src/
-  [`src/index.js`](src/index.js )
-  controllers/
-    [`src/controllers/auth.controller.js`](src/controllers/auth.controller.js )
-  libs/
-    [`src/libs/db.js`](src/libs/db.js )
-  middleware/
-    [`src/middleware/auth.middleware.js`](src/middleware/auth.middleware.js )
-  routes/
-    [`src/routes/auth.routes.js`](src/routes/auth.routes.js )
-```
-
 ## Flow of Execution
 
 ### 1. **Database Setup**
@@ -106,6 +85,27 @@ src/
 - **Check**: Returns the authenticated user's details.
   ```javascript
   res.status(200).json({ user: req.user });
+  ```
+
+### 7. **Admin Role Verification Middleware**
+
+- **Admin Check**: Middleware verifies if the authenticated user has an `ADMIN` role in [`src/middleware/auth.middleware.js`](src/middleware/auth.middleware.js).
+  ```javascript
+  const userId = req.user.id;
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      role: true,
+    },
+  });
+  if (!user || user.role !== "ADMIN") {
+    return res.status(403).json({
+      message: "Access denied - Admins Only",
+    });
+  }
+  next();
   ```
 
 ## Key Features
